@@ -1,0 +1,136 @@
+.demo-page {
+    min-height: 100vh;
+    background: var(--bg);
+    padding: 32px;
+}
+
+.demo-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.demo-header {
+    text-align: center;
+    margin-bottom: 48px;
+}
+
+.demo-header h1 {
+    font-size: 32px;
+    font-weight: 700;
+    color: #1a2b3c;
+    margin: 0 0 16px 0;
+}
+
+.demo-description {
+    font-size: 18px;
+    color: var(--muted);
+    margin: 0;
+}
+
+.demo-preview {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 32px;
+    box-shadow: 0 8px 24px rgba(17,24,39,0.08);
+    border: 1px solid rgba(0,0,0,0.04);
+}
+
+.demo-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+}
+
+.demo-button {
+    font-size: 16px !important;
+    padding: 16px 28px !important;
+    border-radius: 32px !important;
+    background: linear-gradient(180deg,var(--light-blue),#098eea) !important;
+    color: #fff !important;
+    border: 1px solid rgba(0,0,0,0.08) !important;
+    box-shadow: 0 8px 24px rgba(12,18,24,0.12) !important;
+    display: inline-flex !important;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600 !important;
+}
+
+.demo-button-icon {
+    font-size: 20px;
+}
+
+.demo-result {
+    text-align: left;
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 24px 28px;
+    border: 1px solid var(--pill-border);
+    width: 100%;
+    max-width: 400px;
+}
+
+.demo-result h3 {
+    font-size: 18px;
+    color: var(--blue);
+    margin: 0 0 20px 0;
+    font-weight: 600;
+}
+
+.demo-settings {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.demo-setting {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.demo-setting label {
+    color: #586069;
+    font-size: 15px;
+}
+
+.demo-setting span {
+    font-size: 14px;
+    font-weight: 500;
+    padding: 4px 12px;
+    border-radius: 16px;
+}
+
+.demo-setting span.enabled {
+    background: #e8f7ed;
+    color: #0d874b;
+}
+
+.demo-setting span.disabled {
+    background: #f1f3f5;
+    color: #586069;
+}
+
+.demo-setting span.type {
+    background: #edf3ff;
+    color: var(--blue);
+    text-transform: capitalize;
+}
+
+@media (max-width: 600px) {
+    .demo-page {
+        padding: 24px 16px;
+    }
+
+    .demo-preview {
+        padding: 24px 20px;
+    }
+
+    .demo-header h1 {
+        font-size: 28px;
+    }
+
+    .demo-description {
+        font-size: 16px;
+    }
+}

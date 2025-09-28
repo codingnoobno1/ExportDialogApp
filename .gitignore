@@ -1,0 +1,42 @@
+# Ignore build outputs
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio generated files
+.vs/
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Bb]uild/
+[Bb]inaries/
+
+# ASP.NET and Blazor
+wwwroot/**/*.gz
+wwwroot/**/*.br
+wwwroot/**/*.map
+
+# Logs
+*.log
+
+# NuGet
+*.nupkg
+*.snupkg
+*.nuspec
+*.nuget.props
+*.nuget.targets
+packages/
+
+# Others
+*.cache
+*.tmp
+*.swp

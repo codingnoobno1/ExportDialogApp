@@ -1,0 +1,108 @@
+﻿@page "/"
+@using Syncfusion.Blazor
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Inputs
+@using Syncfusion.Blazor.Popups
+@using System.Globalization
+
+<PageTitle>Export Configuration</PageTitle>
+
+<link href="css/demo.css" rel="stylesheet">
+
+<div class="demo-page">
+    <div class="demo-content">
+        <div class="demo-header">
+            <h1>Export Dialog Demo</h1>
+            <p class="demo-description">
+                Configure and generate exports with custom settings. Choose your document scope, format, and export range.
+            </p>
+        </div>
+
+        <div class="demo-preview">
+            <div class="demo-actions">
+                <SfButton CssClass="demo-button" @onclick="OpenDialog">
+                    <span class="demo-button-icon">📤</span>
+                    Open Export Dialog
+                </SfButton>
+
+                @if (LastExport != null)
+                {
+                    <div class="demo-result">
+                        <h3>Last Export Settings</h3>
+                        <div class="demo-settings">
+                            <div class="demo-setting">
+                                <label>Scoping Document:</label>
+                                <span class="@(LastExport.Value.includeScoping ? "enabled" : "disabled")">
+                                    @(LastExport.Value.includeScoping ? "Included" : "Excluded")
+                                </span>
+                            </div>
+                            <div class="demo-setting">
+                                <label>All Documents:</label>
+                                <span class="@(LastExport.Value.includeAll ? "enabled" : "disabled")">
+                                    @(LastExport.Value.includeAll ? "Included" : "Excluded")
+                                </span>
+                            </div>
+                            <div class="demo-setting">
+                                <label>Export Type:</label>
+                                <span class="type">@LastExport.Value.exportType</span>
+                            </div>
+                            <div class="demo-setting">
+                                <label>Include Timestamp:</label>
+                                <span class="@(LastExport.Value.includeTimestamp ? "enabled" : "disabled")">
+                                    @(LastExport.Value.includeTimestamp ? "Yes" : "No")
+                                </span>
+                            </div>
+                            <div class="demo-setting">
+                                <label>File Format:</label>
+                                <span class="type">@LastExport.Value.fileFormat</span>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Export Dialog Component -->
+<ExportDialog 
+    IsDialogVisible="DialogVisible" 
+    IsDialogVisibleChanged="OnDialogVisibleChanged" 
+    OnConfirm="OnExportDialogConfirm" />
+
+@code {
+    private bool DialogVisible { get; set; } = false;
+
+    // Extended Last Export Info
+    private (bool includeScoping, bool includeAll, string exportType, bool includeTimestamp, string fileFormat)? LastExport { get; set; }
+
+    private void OpenDialog() => DialogVisible = true;
+
+    private Task OnDialogVisibleChanged(bool visible)
+    {
+        DialogVisible = visible;
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+
+    private Task OnExportDialogConfirm((bool includeScoping, bool includeAll, string exportType, bool includeTimestamp, string fileFormat) args)
+    {
+        LastExport = args;
+        StateHasChanged();
+
+        // Example: trigger export logic here
+        ExportFile(args);
+
+        return Task.CompletedTask;
+    }
+
+    private void ExportFile((bool includeScoping, bool includeAll, string exportType, bool includeTimestamp, string fileFormat) settings)
+    {
+        string timestamp = settings.includeTimestamp ? $"_{DateTime.Now:yyyyMMdd_HHmmss}" : "";
+        string filename = $"Export{timestamp}.{settings.fileFormat.ToLower(CultureInfo.InvariantCulture)}";
+
+        // TODO: Add your backend export logic here
+        Console.WriteLine($"Exporting file: {filename}");
+        Console.WriteLine($"Include Scoping: {settings.includeScoping}, Include All: {settings.includeAll}, Export Type: {settings.exportType}");
+    }
+}

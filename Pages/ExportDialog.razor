@@ -1,0 +1,183 @@
+@using Syncfusion.Blazor
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Inputs
+@using Syncfusion.Blazor.Popups
+@using Syncfusion.Blazor.DropDowns
+
+<link href="css/exportdialog.css" rel="stylesheet">
+
+<SfDialog @bind-Visible="IsDialogVisible"
+         Width="820px"
+         ShowCloseIcon="false"
+         IsModal="true"
+         CssClass="modal"
+         AllowDragging="true">
+
+    <DialogTemplates>
+        <Header>
+            <div class="modal-header">
+                <h2 id="titleExport">Export Configuration</h2>
+                <span class="modal-subtitle">Configure your export options below</span>
+            </div>
+        </Header>
+        <Content>
+            <div class="modal-body">
+                <div class="section documents">
+                    <h3>Document Selection</h3>
+                    <div class="setting">
+                        <label for="includeScoping">
+                            <span class="icon">📄</span>
+                            Scoping Document
+                        </label>
+                        <SfSwitch @bind-Checked="IncludeScopingDoc" Id="includeScoping"></SfSwitch>
+                    </div>
+                    <div class="setting">
+                        <label for="includeAll">
+                            <span class="icon">📚</span>
+                            All Documents
+                        </label>
+                        <SfSwitch @bind-Checked="IncludeAllDoc" @onclick="OnIncludeAllChanged" Id="includeAll"></SfSwitch>
+                    </div>
+                </div>
+
+                <div class="section export-range">
+                    <h3>Export Range</h3>
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <SfRadioButton TChecked="string" 
+                                         Label="Selected Records" 
+                                         Name="exportType" 
+                                         Value="selected" 
+                                         @bind-CheckedValue="ExportType">
+                            </SfRadioButton>
+                        </div>
+                        <div class="radio-item">
+                            <SfRadioButton TChecked="string" 
+                                         Label="All Pages" 
+                                         Name="exportType" 
+                                         Value="all" 
+                                         Disabled="@(!IncludeAllDoc)"
+                                         @bind-CheckedValue="ExportType">
+                            </SfRadioButton>
+                            @if (!IncludeAllDoc)
+                            {
+                                <div class="hint">Enable "All Documents" to select</div>
+                            }
+                        </div>
+                        <div class="radio-item">
+                            <SfRadioButton TChecked="string" 
+                                         Label="Current Page" 
+                                         Name="exportType" 
+                                         Value="current" 
+                                         @bind-CheckedValue="ExportType">
+                            </SfRadioButton>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section format">
+                    <h3>Export Format</h3>
+                    <div class="format-options">
+                        <div class="format-selector">
+                            <label for="fileFormat">File Type</label>
+                            <SfDropDownList TValue="string"
+                                          TItem="ExportFormat"
+                                          @bind-Value="FileFormat"
+                                          DataSource="@FileFormats"
+                                          Id="fileFormat">
+                                <DropDownListFieldSettings Text="Text" Value="Value"></DropDownListFieldSettings>
+                            </SfDropDownList>
+                        </div>
+                        <div class="setting timestamp-option">
+                            <label for="includeTimestamp">
+                                <span class="icon">🕐</span>
+                                Add Timestamp to Filename
+                            </label>
+                            <SfSwitch @bind-Checked="IncludeTimestamp" Id="includeTimestamp"></SfSwitch>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </Content>
+        <FooterTemplate>
+            <div class="modal-footer">
+                <div class="footer-content">
+                    @if (!IsValidExport)
+                    {
+                        <div class="validation-message">
+                            Please select at least one document to export
+                        </div>
+                    }
+                    <div class="buttons">
+                        <SfButton CssClass="btn cancel" @onclick="CloseDialog">Cancel</SfButton>
+                        <SfButton CssClass="btn export" @onclick="ConfirmDialog" 
+                                 Disabled="@(!IsValidExport)">
+                            <span class="icon">📤</span>
+                            Export
+                        </SfButton>
+                    </div>
+                </div>
+            </div>
+        </FooterTemplate>
+    </DialogTemplates>
+</SfDialog>
+
+@code {
+    [Parameter] public bool IsDialogVisible { get; set; }
+    [Parameter] public EventCallback<bool> IsDialogVisibleChanged { get; set; }
+    [Parameter] public EventCallback<(bool includeScoping, bool includeAll, string exportType, bool includeTimestamp, string fileFormat)> OnConfirm { get; set; }
+
+    private bool IncludeScopingDoc { get; set; } = true;
+    private bool IncludeAllDoc { get; set; } = false;
+    private string ExportType { get; set; } = "selected";
+    private bool IncludeTimestamp { get; set; } = true;
+    private string FileFormat { get; set; } = "PDF";
+
+    private class ExportFormat
+    {
+        public required string Text { get; set; }
+        public required string Value { get; set; }
+    }
+
+    private List<ExportFormat> FileFormats = new()
+    {
+        new ExportFormat { Text = "PDF Document", Value = "PDF" },
+        new ExportFormat { Text = "Excel Workbook", Value = "XLSX" },
+        new ExportFormat { Text = "CSV File", Value = "CSV" }
+    };
+
+    private bool IsValidExport => IncludeScopingDoc || IncludeAllDoc;
+
+    private void OnIncludeAllChanged()
+    {
+        if (!IncludeAllDoc && ExportType == "all")
+        {
+            ExportType = "selected";
+        }
+    }
+
+    private async Task CloseDialog()
+    {
+        IsDialogVisible = false;
+        await IsDialogVisibleChanged.InvokeAsync(false);
+    }
+
+    protected override void OnInitialized()
+    {
+        // Reset to default values when dialog initializes
+        IncludeScopingDoc = true;
+        IncludeAllDoc = false;
+        ExportType = "selected";
+        IncludeTimestamp = true;
+        FileFormat = "PDF";
+    }
+
+    private async Task ConfirmDialog()
+    {
+        if (IsValidExport)
+        {
+            await OnConfirm.InvokeAsync((IncludeScopingDoc, IncludeAllDoc, ExportType, IncludeTimestamp, FileFormat));
+            await CloseDialog();
+        }
+    }
+}
